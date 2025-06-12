@@ -3,7 +3,7 @@ import os
 class Stats:
     def __init__(self, game):
         self.settings = game.settings # reference game settings
-        self.file_name = "./Platformer/user_stats.txt" # sets name of the stats file
+        self.file_name = "./user_stats.txt" # sets name of the stats file
 
         self.create_stats()
         
