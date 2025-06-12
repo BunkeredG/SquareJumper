@@ -13,7 +13,7 @@ class Block(Sprite):
         self.width, self.height = self.settings.cell_width, self.settings.cell_height
 
         # load block image
-        self.image_path = 'Platformer/block.png'
+        self.image_path = './block.png'
         self.image = pygame.image.load(self.image_path)
 
         # create and display rectangle

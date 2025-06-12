@@ -13,7 +13,7 @@ class Key(Sprite):
         self.width, self.height = self.settings.cell_width, self.settings.cell_height
 
         # load key image
-        self.image_path = 'Platformer/key.png'
+        self.image_path = './key.png'
         self.image = pygame.image.load(self.image_path)
 
         # create rectangle and set it to a given x and y
