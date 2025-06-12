@@ -36,7 +36,7 @@ class Stats:
 
 
     def create_stats(self):
-        file_list = os.listdir("./Platformer/") # file_list is a list that contains the title of every file in the Platformer directory
+        file_list = os.listdir("./") # file_list is a list that contains the title of every file in the Platformer directory
         
         # if the user stats file does not exist
         if "user_stats.txt" not in file_list:
