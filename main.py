@@ -12,9 +12,14 @@ from player import Player
 from settings import Settings
 from stats import Stats
 
+
+# TODO:
+# Create levels (10-15)
+# Sprites & Graphics
+
 # Loading background music
 # pygame.mixer.init()
-# pygame.mixer.music.load('Platformer/Background.mp3')
+# pygame.mixer.music.load('./Background.mp3')
 # pygame.mixer.music.play(-1) # Play the background music on loop
 # pygame.mixer.music.set_volume(0.03)
 
@@ -26,7 +31,7 @@ class Platformer:
         self.font = pygame.font.SysFont(None, 50)
 
         # initialize sound effects
-        # self.key_sound = pygame.mixer.Sound('Platformer/Key Collection.mp3')
+        # self.key_sound = pygame.mixer.Sound('./Key Collection.mp3')
         # self.key_sound.set_volume(0.05)
 
         # settings and stats
