@@ -10,12 +10,12 @@ from key import Key
 from moving_block import MovingBlock
 from player import Player
 from settings import Settings
+from sprite_box import SpriteBox
 from stats import Stats
 
 
 # TODO:
 # Create levels (10-15)
-# Sprites & Graphics
 
 # Loading background music
 # pygame.mixer.init()
@@ -46,6 +46,8 @@ class Platformer:
         self.keys = pygame.sprite.Group()
         self.blocks = pygame.sprite.Group()
         self.moving_blocks = pygame.sprite.Group()
+        self.left_stops = pygame.sprite.Group()
+        self.right_stops = pygame.sprite.Group()
         self.colored_blocks = pygame.sprite.Group()
         self.doors = pygame.sprite.Group()
         self.colliders = pygame.sprite.Group()
@@ -109,6 +111,8 @@ class Platformer:
         # draws all sprites
         self.blocks.draw(self.screen)
         self.colored_blocks.draw(self.screen)
+        self.left_stops.draw(self.screen)
+        self.right_stops.draw(self.screen)
         self.moving_blocks.draw(self.screen)
         self.keys.draw(self.screen)
         self.doors.draw(self.screen)
@@ -185,11 +189,11 @@ class Platformer:
         new_moving_block = MovingBlock(self, x, y)
         self.moving_blocks.add(new_moving_block)
 
-        new_colored_block = ColoredBlock(self, x, y)
-        self.colored_blocks.add(new_colored_block)
+        left_moving_stop_block = SpriteBox(self, x, y, './left_moving_stop.png')
+        self.left_stops.add(left_moving_stop_block)
 
-        dest_colored_block = ColoredBlock(self, x+self.settings.level_movement[self.current_level], y)
-        self.colored_blocks.add(dest_colored_block)
+        right_moving_stop_block = SpriteBox(self, x+self.settings.level_movement[self.current_level], y, './right_moving_stop.png')
+        self.right_stops.add(right_moving_stop_block)
 
 
     def create_key(self, x, y):
@@ -354,6 +358,8 @@ class Platformer:
     def remove_all(self):
         # empties all sprite lists
         self.blocks.empty()
+        self.left_stops.empty()
+        self.right_stops.empty()
         self.moving_blocks.empty()
         self.colored_blocks.empty()
         self.keys.empty()
