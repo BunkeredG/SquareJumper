@@ -12,6 +12,7 @@ class Player(Sprite):
         self.settings = game.settings
         self.stats = game.stats
         self.screen_rect = self.screen.get_rect()
+        self.num_double_jumps = 0
 
         # creates player rectangle with given width and height at specific position
         self.width, self.height = 50, 50
@@ -27,7 +28,6 @@ class Player(Sprite):
 
         # booleans for allowing jumps
         self.on_ground = True
-        self.allow_double_jump = True
         self.double_jump = True
 
         self.change_x, self.change_y = 0, 0
@@ -69,9 +69,10 @@ class Player(Sprite):
             self.on_ground = False # player is no longer on the ground
             self.jumping = False # player is no longer jumping
 
-        # if player has an available double jump and the level allows double jumps
-        elif self.double_jump and self.allow_double_jump:
+        # if player has an available double jump and there are still double jumps available
+        elif self.double_jump and self.num_double_jumps > 0:
             self.jump_util()
+            self.num_double_jumps -= 1 # decrease available number of double jumps
             self.double_jump = False # player no longer has a double jump
 
     

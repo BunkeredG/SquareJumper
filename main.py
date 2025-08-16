@@ -12,6 +12,7 @@ from player import Player
 from settings import Settings
 from sprite_box import SpriteBox
 from stats import Stats
+from vertical_moving_block import VerticalMovingBlock
 
 
 # TODO:
@@ -48,6 +49,9 @@ class Platformer:
         self.moving_blocks = pygame.sprite.Group()
         self.left_stops = pygame.sprite.Group()
         self.right_stops = pygame.sprite.Group()
+        self.vertical_moving_blocks = pygame.sprite.Group()
+        self.up_stops = pygame.sprite.Group()
+        self.down_stops = pygame.sprite.Group()
         self.colored_blocks = pygame.sprite.Group()
         self.doors = pygame.sprite.Group()
         self.colliders = pygame.sprite.Group()
@@ -85,6 +89,7 @@ class Platformer:
             self.update_screen()
 
             self.move_moving_blocks()
+            self.move_vertical_moving_blocks()
             
             # shows updated drawings on the screen
             pygame.display.flip()
@@ -113,7 +118,10 @@ class Platformer:
         self.colored_blocks.draw(self.screen)
         self.left_stops.draw(self.screen)
         self.right_stops.draw(self.screen)
+        self.up_stops.draw(self.screen)
+        self.down_stops.draw(self.screen)
         self.moving_blocks.draw(self.screen)
+        self.vertical_moving_blocks.draw(self.screen)
         self.keys.draw(self.screen)
         self.doors.draw(self.screen)
         self.death_colliders.draw(self.screen)
@@ -155,6 +163,10 @@ class Platformer:
                 elif cell == 'M':
                     self.create_moving_block(cell_idx * self.settings.cell_width, row_idx * self.settings.cell_height)
 
+                # draws a vertical moving block
+                elif cell == "V":
+                    self.create_vertical_moving_block(cell_idx * self.settings.cell_width, row_idx * self.settings.cell_height)
+
                 # close game on completion
                 elif cell == 'C':
                     print("\n\n\n\n---COMPLETE---")
@@ -163,21 +175,37 @@ class Platformer:
                     print("\n\n")
                     self.game_exit()
         
-        # allow or deny player the ablility to double jump based off list
-        self.player.allow_double_jump = self.settings.allow_double_jump_list[self.current_level]
+        # set number of double jumps available to the total number given by the level
+        self.player.num_double_jumps = self.settings.total_double_jumps[self.current_level]
 
 
     def display_level(self):
-        # renders the text
+        # renders level text
         self.level_display = self.font.render(str(self.current_level+1), True, self.settings.text_color)
 
-        # creates and positions the text's rectangle
+        # creates and positions level text's rectangle
         self.level_display_rect = self.level_display.get_rect()
         self.level_display_rect.x = 25
         self.level_display_rect.y = 25
 
-        # displays the text
+        # displays level text
         self.screen.blit(self.level_display, self.level_display_rect)
+
+
+        # renders number of double jumps
+        if self.settings.total_double_jumps[self.current_level] != 0 and self.settings.total_double_jumps[self.current_level] != 10000:
+            if self.player.num_double_jumps > 0:
+                self.double_jump_display = self.font.render(str(self.player.num_double_jumps), True, self.settings.text_color)
+            elif self.player.num_double_jumps == 0:
+                self.double_jump_display = self.font.render(str(self.player.num_double_jumps), True, self.settings.red_color)
+
+            # creates and positions level text's rectangle
+            self.double_jump_display_rect = self.double_jump_display.get_rect()
+            self.double_jump_display_rect.x = 25
+            self.double_jump_display_rect.y = 75
+
+            # displays double jump text
+            self.screen.blit(self.double_jump_display, self.double_jump_display_rect)
 
     
     def create_block(self, x, y):
@@ -192,8 +220,19 @@ class Platformer:
         left_moving_stop_block = SpriteBox(self, x, y, './left_moving_stop.png')
         self.left_stops.add(left_moving_stop_block)
 
-        right_moving_stop_block = SpriteBox(self, x+self.settings.level_movement[self.current_level], y, './right_moving_stop.png')
+        right_moving_stop_block = SpriteBox(self, x+self.settings.level_movement_x[self.current_level], y, './right_moving_stop.png')
         self.right_stops.add(right_moving_stop_block)
+
+
+    def create_vertical_moving_block(self, x, y):
+        new_moving_block = VerticalMovingBlock(self, x, y)
+        self.vertical_moving_blocks.add(new_moving_block)
+
+        down_moving_stop_block = SpriteBox(self, x, y, './down_moving_stop.png')
+        self.down_stops.add(down_moving_stop_block)
+
+        up_moving_stop_block = SpriteBox(self, x, y+self.settings.level_movement_y[self.current_level], './up_moving_stop.png')
+        self.up_stops.add(up_moving_stop_block)
 
 
     def create_key(self, x, y):
@@ -220,8 +259,10 @@ class Platformer:
         # list of all collisions between player and block
         collisions = pygame.sprite.spritecollide(self.player, self.blocks, False)
         moving_collisions = pygame.sprite.spritecollide(self.player, self.moving_blocks, False)
+        vertical_moving_collisions = pygame.sprite.spritecollide(self.player, self.vertical_moving_blocks, False)
 
         collisions += moving_collisions
+        collisions += vertical_moving_collisions
 
         # if there was a collision
         if collisions:
@@ -247,6 +288,10 @@ class Platformer:
                     # if player colliding with a moving block (therefore: if player is on top of a moving block)
                     if moving_collisions:
                         self.on_moving_block = True
+
+                    # if player colliding with a vertical moving block (therefore: if player is on top of a vertical moving block)
+                    if vertical_moving_collisions:
+                        self.on_vertical_moving_block = True
                 
                 # if player is below
                 elif b_y - self.settings.player_jump_height < p_y - self.settings.cell_height <= b_y and b_x - (self.settings.cell_width-10) < p_x < b_x + (self.settings.cell_width-10):
@@ -280,11 +325,21 @@ class Platformer:
         if not moving_collisions:
             self.on_moving_block = False
 
+        # if there wasn't a collision with a vertical moving block
+        if not vertical_moving_collisions:
+            self.on_vertical_moving_block = False
+
     
     def move_player_on_moving_block(self):
         if self.on_moving_block:
             # move player at: rate of moving blocks on current level * direction of moving block (forward/reverse)
-            self.player.rect.x += self.settings.movement_speed[self.current_level] * self.moving_blocks.sprites()[0].get_direction()
+            self.player.rect.x += self.settings.movement_speed_x[self.current_level] * self.moving_blocks.sprites()[0].get_direction()
+
+    
+    def move_player_on_vertical_moving_block(self):
+        if self.on_vertical_moving_block:
+            # move player at: rate of moving blocks on current level * direction of moving block (forward/reverse)
+            self.player.rect.y += self.settings.movement_speed_y[self.current_level] * self.vertical_moving_blocks.sprites()[0].get_direction()
 
     
     def check_key_player_collision(self):
@@ -338,7 +393,12 @@ class Platformer:
 
     def move_moving_blocks(self):
         for block in self.moving_blocks:
-            block.move(block.init_x + self.settings.level_movement[self.current_level], self.settings.movement_speed[self.current_level])
+            block.move(block.init_x + self.settings.level_movement_x[self.current_level], self.settings.movement_speed_x[self.current_level])
+
+
+    def move_vertical_moving_blocks(self):
+        for block in self.vertical_moving_blocks:
+            block.move(block.init_y + self.settings.level_movement_y[self.current_level], self.settings.movement_speed_y[self.current_level])
 
 
     def open_door(self):
@@ -361,6 +421,9 @@ class Platformer:
         self.left_stops.empty()
         self.right_stops.empty()
         self.moving_blocks.empty()
+        self.up_stops.empty()
+        self.down_stops.empty()
+        self.vertical_moving_blocks.empty()
         self.colored_blocks.empty()
         self.keys.empty()
         self.doors.empty()

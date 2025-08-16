@@ -17,12 +17,25 @@ class Settings:
         # colors
         self.colored_block_color = (255, 0, 0, 30)
         self.text_color = (255, 255, 255)
+        self.red_color = (255, 0, 0)
 
         # allow or disable double jump depending on level
-        self.allow_double_jump_list = [False, False, False, True, True, True]
+        self.total_double_jumps = [0, 0, 0, 10000, 10000, 1, 10000, 2] # 10000 = infinite
 
-        self.level_movement = [0, 0, 0, 0, 0, 500]
-        self.movement_speed = [0, 0, 0, 0, 0, 5]
+        # movement and movement speed for x direction moving blocks
+        self.level_movement_x = [0, 0, 0, 0, 0, 0, 500, 250]
+        self.movement_speed_x = [0, 0, 0, 0, 0, 0, 5, 3]
+
+        # movement and movement speed for y direction moving blocks
+        self.level_movement_y = [0, 0, 0, 0, 0, 0, 0, 300]
+        self.movement_speed_y = [0, 0, 0, 0, 0, 0, 0, 2]
+
+        # level split:
+        # 12 total
+        # 3 initial with no double jump
+        # 3 initial with double jump
+        # 2 initial with moving blocks
+        # 4 hard combinations
 
         # list of levels, key on right
         self.levels = [[  # 16 rows, 28 cols, 1 cell is 50x50
@@ -33,8 +46,8 @@ class Settings:
             '                           X', # D = Death
             ' P                         X', # M = Moving Platform
             'XXX                        E',
-            '       XXX                  ',
-            '             XXX         XXX',
+            '       XXX   XXX            ', # Level 1, Intro to Game 1
+            '                         XXX',
             '                    XXX    X',
             '                           X',
             '          K    XXX         X',
@@ -43,7 +56,7 @@ class Settings:
             '                           X',
             'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
         ], [
-            '                           X',
+            '                           X', # Level 2, Intro to Game 2
             '                K          X',
             '                           X',
             '                           X',
@@ -60,24 +73,24 @@ class Settings:
             '                           X',
             'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
         ], [
-            '                           X',
+            '                           X', # Level 3, Intro to Game 3
             '                           X',
             ' K                         X',
             '                           X',
             '                           X',
             '                           X',
-            'DD   X     X               X',
+            'DD    X    X               X',
             'XX                    X    E',
             '   X             X          ',
             '      X                   XX',
-            '           X               X',
+            '          XX               X',
             '                           X',
             '      X                    X',
-            'P                          X',
-            'XX                          X',
+            ' P                         X',
+            'XXX                         X',
             'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
         ], [
-            '            K              X',
+            '               K           X', # Level 4, Intro to Double Jump 1
             '                           X',
             '                           X',
             '                           X',
@@ -94,38 +107,72 @@ class Settings:
             '                           X',
             'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
         ], [
-            '            K              X',
+            '                           X', # Level 5, Intro to Multiple Keys
+            '                         K X',
+            '                         XXX',
             '                           X',
-            '                           X',
-            '                           X',
-            '                           X',
-            '                     XXX   X',
+            'K                  X       X',
+            'XX                         X',
             '                           X',
             '                           E',
-            '                            ',
-            ' P       XXXXXXXXXXX     XXX',
-            'XXX                        X',
+            '               XX           ',
+            '      X                   XX',
             '                           X',
+            '                           X',
+            '                           X',
+            ' P       XX                X',
+            'XXX                        X',
+            'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
+        ], [
+            '                           X', # Level 6, Intro to Limited Double Jumps (incomplete)
+            '                           X',
+            ' K                         X',
+            ' XX     XXXX               E',
+            '                            ',
+            '               X          XX',
+            '                       XX  X',
+            '                   X       X',
+            '                XXXX       X',
+            ' P                         X',
+            'XXX                        X',
+            '      XXX                  X',
             '                           X',
             '                           X',
             '                           X',
             'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
         ], [
-            '            K              X',
+            '                           X', # Level 7, Intro to Moving Blocks 1
+            'K                          X',
+            'XX                         X',
+            '       MMMMM               X',
             '                           X',
             '                           X',
-            '                           X',
-            '                           X',
-            '                     XXX   X',
-            '                           X',
+            '                         XXX',
             '                           E',
-            '       MMMMM                ',
-            ' P                       XXX',
+            '                            ',
+            '       MMMMM             XXX',
+            '                           X',
+            ' P                         X',
             'XXX                        X',
             '                           X',
             '                           X',
+            'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
+        ], [
+            '            K              X', # Level 8, Intro to Moving Blocks 2 (incomplete)
             '                           X',
             '                           X',
+            '                  VVV      X',
+            '      MMM                  X',
+            '                           X',
+            '                        VVVX',
+            '                           E',
+            '     MMM                    ',
+            '                           X',
+            '                           X',
+            '                           X',
+            '    MMM                    X',
+            ' P                         X',
+            'XXX                        X',
             'DDDDDDDDDDDDDDDDDDDDDDDDDDDX'
         ], [
             'C'
