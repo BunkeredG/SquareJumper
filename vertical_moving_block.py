@@ -13,7 +13,7 @@ class VerticalMovingBlock(Sprite):
         self.width, self.height = self.settings.cell_width, self.settings.cell_height
 
         # load block image
-        self.image_path = './vertical_moving_block.png'
+        self.image_path = './assets/vertical_moving_block.png'
         self.image = pygame.image.load(self.image_path)
 
         # create rectangle and set it to a given x and y

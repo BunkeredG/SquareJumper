@@ -13,7 +13,7 @@ class Door(Sprite):
         self.width, self.height = self.settings.cell_width, 2*self.settings.cell_height
 
         # load door image
-        self.image_path = './door.png'
+        self.image_path = './assets/door.png'
         self.image = pygame.image.load(self.image_path)
 
         # create rectangle and set it to a given x and y

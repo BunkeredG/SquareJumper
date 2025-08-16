@@ -217,10 +217,10 @@ class Platformer:
         new_moving_block = MovingBlock(self, x, y)
         self.moving_blocks.add(new_moving_block)
 
-        left_moving_stop_block = SpriteBox(self, x, y, './left_moving_stop.png')
+        left_moving_stop_block = SpriteBox(self, x, y, './assets/left_moving_stop.png')
         self.left_stops.add(left_moving_stop_block)
 
-        right_moving_stop_block = SpriteBox(self, x+self.settings.level_movement_x[self.current_level], y, './right_moving_stop.png')
+        right_moving_stop_block = SpriteBox(self, x+self.settings.level_movement_x[self.current_level], y, './assets/right_moving_stop.png')
         self.right_stops.add(right_moving_stop_block)
 
 
@@ -228,10 +228,10 @@ class Platformer:
         new_moving_block = VerticalMovingBlock(self, x, y)
         self.vertical_moving_blocks.add(new_moving_block)
 
-        down_moving_stop_block = SpriteBox(self, x, y, './down_moving_stop.png')
+        down_moving_stop_block = SpriteBox(self, x, y, './assets/down_moving_stop.png')
         self.down_stops.add(down_moving_stop_block)
 
-        up_moving_stop_block = SpriteBox(self, x, y+self.settings.level_movement_y[self.current_level], './up_moving_stop.png')
+        up_moving_stop_block = SpriteBox(self, x, y+self.settings.level_movement_y[self.current_level], './assets/up_moving_stop.png')
         self.up_stops.add(up_moving_stop_block)
 
 
@@ -392,11 +392,13 @@ class Platformer:
 
 
     def move_moving_blocks(self):
+        # calls move function for every block in moving block group with initial values based on level settings
         for block in self.moving_blocks:
             block.move(block.init_x + self.settings.level_movement_x[self.current_level], self.settings.movement_speed_x[self.current_level])
 
 
     def move_vertical_moving_blocks(self):
+        # calls move function for every block in vertical moving block group with initial values based on level settings
         for block in self.vertical_moving_blocks:
             block.move(block.init_y + self.settings.level_movement_y[self.current_level], self.settings.movement_speed_y[self.current_level])
 
